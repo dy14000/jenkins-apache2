@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
-                    docker.build('dy14000/jenkins-apache2', './ubuntu_apache2/') // plugin > docker pilpeline 설치시 사용가능함함
+                    docker.build('dy14000/jenkins-apache2', '--no-cache ./ubuntu_apache2') // plugin > docker pilpeline 설치시 사용가능함함
                    // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
                     }
                 }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
-                    docker.build('dy14000/jenkins-nginx', './ubuntu_nginx/') // plugin > docker pilpeline 설치시 사용가능함함
+                    docker.build('dy14000/jenkins-nginx', '--no-cache ./ubuntu_nginx') // plugin > docker pilpeline 설치시 사용가능함함
                    // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
                     }
                 }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
-                    docker.build('dy14000/jenkins-nginxLB', './ubuntu_nginx_loadbalancer/') // plugin > docker pilpeline 설치시 사용가능함함
+                    docker.build('dy14000/jenkins-nginxlb', '--no-cache ./ubuntu_nginx_loadbalancer') // plugin > docker pilpeline 설치시 사용가능함함
                    // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
                     }
                 }
@@ -69,7 +69,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {  
-                        def img = docker.image('dy14000/jenkins-nginxLB')
+                        def img = docker.image('dy14000/jenkins-nginxlb')
                         img.push('latest')
                         img.push('0.1')
                     }
