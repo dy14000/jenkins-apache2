@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+    triggers {
+        githubPush()
+    }
+    options {
+        timestamps()
+    }
+    stages {
+        stage('Github Repository Clone & Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/dy14000/jenkins-apache2.git'
+            }
+        }
+        stage('Docker Build1') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
+                    docker.build('dy14000/jenkins-apache2', './ubuntu_apache2/') // plugin > docker pilpeline 설치시 사용가능함함
+                   // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
+                    }
+                }
+            }
+        }
+        stage('Docker Build2') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
+                    docker.build('dy14000/jenkins-nginx', './ubuntu_nginx/') // plugin > docker pilpeline 설치시 사용가능함함
+                   // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
+                    }
+                }
+            }
+        }
+        stage('Docker Build3') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub' ) { 
+                    docker.build('dy14000/jenkins-nginxLB', './ubuntu_nginx_loadbalancer/') // plugin > docker pilpeline 설치시 사용가능함함
+                   // docker build <계정명>/<리포지토리명|이미지명>:<태그|버전>
+                    }
+                }
+            }
+        }
+        stage('Docker Image Push1') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {  
+                        def img = docker.image('dy14000/jenkins-apache2')
+                        img.push('latest')
+                        img.push('0.1')
+                    }
+                }
+            }
+        }
+        stage('Docker Image Push2') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {  
+                        def img = docker.image('dy14000/jenkins-nginx')
+                        img.push('latest')
+                        img.push('0.1')
+                    }
+                }
+            }
+        }
+        stage('Docker Image Push3') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {  
+                        def img = docker.image('dy14000/jenkins-nginxLB')
+                        img.push('latest')
+                        img.push('0.1')
+                    }
+                }
+            }
+        }
+    }
+    post {
+        cleanup {
+        emailext subject: '$DEFAULT_SUBJECT',
+                 to: 'quawa9@naver.com', //받는사람
+                 body: '$DEFUAILT_CONTENT'
+        }// cleanWs() 작업영역 삭제
+    }
+}
