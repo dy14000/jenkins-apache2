@@ -79,9 +79,9 @@ pipeline {
     }
     post {
         cleanup {
-        emailext subject: '$DEFAULT_SUBJECT',
-                 to: 'quawa9@naver.com', //받는사람
-                 body: '$DEFUAILT_CONTENT'
-        }// cleanWs() 작업영역 삭제
+            emailext subject: '$DEFAULT_SUBJECT',
+                     to: 'quawa9@naver.com', // 받는 사람
+                     body: '$DEFAULT_CONTENT'
+        }
     }
 }
